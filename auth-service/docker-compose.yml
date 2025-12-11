@@ -1,0 +1,30 @@
+services:
+  usuarios-db:
+    image: postgres:15
+    restart: on-failure 
+    environment:
+      POSTGRES_USER: userdb
+      POSTGRES_PASSWORD: passdb
+      POSTGRES_DB: usuarios
+    ports:
+      - "5434:5432"
+    volumes:
+      - usuarios_data:/var/lib/postgresql/data
+
+  usuarios-api:
+    build: .
+    restart: on-failure
+    depends_on:
+      - usuarios-db
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: usuarios-db
+      DB_USER: userdb
+      DB_PASSWORD: passdb
+      DB_NAME: usuarios
+      DB_PORT: 5432
+      JWT_SECRET: superclavejwt123
+
+volumes:
+  usuarios_data:
